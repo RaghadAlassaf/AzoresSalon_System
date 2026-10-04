@@ -9,6 +9,7 @@ package azoressalon_system;
  * @author ragha
  */
 
+
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
@@ -29,7 +30,7 @@ public class CategoryServicesFrame extends JFrame {
         this.category = category;
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(820, 680);
+        setSize(700, 600);
         setLocationRelativeTo(null);
 
         add(buildCategoryScreen());
@@ -90,10 +91,10 @@ public class CategoryServicesFrame extends JFrame {
     private JPanel createHeader() {
         JPanel header = new JPanel(new GridBagLayout());
         header.setBackground(BROWN);
-        header.setPreferredSize(new Dimension(10, 65));
+        header.setPreferredSize(new Dimension(10, 55));
 
         JLabel salonName = new JLabel("Azores Salon");
-        salonName.setFont(new Font("Serif", Font.BOLD, 24));
+        salonName.setFont(new Font("Serif", Font.BOLD, 22));
         salonName.setForeground(Color.WHITE);
 
         header.add(salonName);
@@ -104,7 +105,7 @@ public class CategoryServicesFrame extends JFrame {
         JPanel row = new JPanel(new BorderLayout(15, 0));
         row.setBackground(Color.WHITE);
         row.setBorder(new CompoundBorder(new LineBorder(BROWN, 1), new EmptyBorder(10, 15, 10, 15)));
-        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 105));
+        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 95));
 
         JPanel info = new JPanel();
         info.setLayout(new BoxLayout(info, BoxLayout.Y_AXIS));
@@ -188,7 +189,7 @@ public class CategoryServicesFrame extends JFrame {
         button.setBorderPainted(false);
         button.setFocusPainted(false);
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        button.setPreferredSize(new Dimension(125, 38));
+        button.setPreferredSize(new Dimension(115, 36));
         return button;
     }
 
@@ -202,10 +203,10 @@ public class CategoryServicesFrame extends JFrame {
         button.setBorder(new LineBorder(BROWN, 1));
         button.setFocusPainted(false);
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        button.setPreferredSize(new Dimension(100, 36));
+        button.setPreferredSize(new Dimension(90, 34));
 
         if (imagePath != null) {
-            ImageIcon icon = loadIcon(imagePath, 17, 17);
+            ImageIcon icon = loadIcon(imagePath, 15, 15);
             if (icon != null) button.setIcon(icon);
         }
 

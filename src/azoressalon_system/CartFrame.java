@@ -9,6 +9,7 @@ package azoressalon_system;
  * @author ragha
  */
 
+
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
@@ -47,7 +48,7 @@ public class CartFrame extends JFrame {
     public CartFrame() {
         super("Azores Salon");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(820, 680);
+        setSize(700, 600);
         setLocationRelativeTo(null);
 
         add(buildCartScreen());
@@ -61,11 +62,25 @@ public class CartFrame extends JFrame {
             setOpaque(false);
         }
 
-        public Dimension getPreferredScrollableViewportSize() { return getPreferredSize(); }
-        public int getScrollableUnitIncrement(Rectangle r, int o, int d) { return 16; }
-        public int getScrollableBlockIncrement(Rectangle r, int o, int d) { return 64; }
-        public boolean getScrollableTracksViewportWidth() { return true; }
-        public boolean getScrollableTracksViewportHeight() { return false; }
+        public Dimension getPreferredScrollableViewportSize() {
+            return getPreferredSize();
+        }
+
+        public int getScrollableUnitIncrement(Rectangle r, int o, int d) {
+            return 16;
+        }
+
+        public int getScrollableBlockIncrement(Rectangle r, int o, int d) {
+            return 64;
+        }
+
+        public boolean getScrollableTracksViewportWidth() {
+            return true;
+        }
+
+        public boolean getScrollableTracksViewportHeight() {
+            return false;
+        }
     }
 
     public static boolean addToCart(String name, String date, String time, int price) {
@@ -126,7 +141,7 @@ public class CartFrame extends JFrame {
         buttons.setOpaque(false);
 
         JButton continueShopping = makeSecondaryButton("Continue Shopping");
-        continueShopping.setPreferredSize(new Dimension(220, 42));
+        continueShopping.setPreferredSize(new Dimension(190, 38));
 
         continueShopping.addActionListener(e -> {
             new ServicesFrame().setVisible(true);
@@ -173,7 +188,7 @@ public class CartFrame extends JFrame {
         JPanel row = new JPanel(new BorderLayout(10, 0));
         row.setBackground(Color.WHITE);
         row.setBorder(new CompoundBorder(new LineBorder(BROWN, 1), new EmptyBorder(8, 10, 8, 10)));
-        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 70));
+        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 65));
 
         JPanel left = new JPanel();
         left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
@@ -232,10 +247,10 @@ public class CartFrame extends JFrame {
     private JPanel createHeader() {
         JPanel header = new JPanel(new GridBagLayout());
         header.setBackground(BROWN);
-        header.setPreferredSize(new Dimension(10, 65));
+        header.setPreferredSize(new Dimension(10, 55));
 
         JLabel salonName = new JLabel("Azores Salon");
-        salonName.setFont(new Font("Serif", Font.BOLD, 24));
+        salonName.setFont(new Font("Serif", Font.BOLD, 22));
         salonName.setForeground(Color.WHITE);
 
         header.add(salonName);
@@ -252,7 +267,7 @@ public class CartFrame extends JFrame {
         button.setFocusPainted(false);
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         button.setMargin(new Insets(2, 6, 2, 6));
-        button.setPreferredSize(new Dimension(190, 42));
+        button.setPreferredSize(new Dimension(170, 38));
         return button;
     }
 

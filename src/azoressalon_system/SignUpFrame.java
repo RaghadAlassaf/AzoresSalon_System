@@ -9,6 +9,7 @@ package azoressalon_system;
  * @author ragha
  */
 
+
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
@@ -27,6 +28,7 @@ public class SignUpFrame extends JFrame {
     static final Font NORMAL = new Font("Serif", Font.PLAIN, 15);
 
     private static final Map<String, String[]> users = new HashMap<>();
+    private static String currentCustomerName;
 
     private JTextField nameField, mobileField;
     private JPasswordField passwordField, confirmPasswordField;
@@ -34,7 +36,7 @@ public class SignUpFrame extends JFrame {
     public SignUpFrame() {
         super("Azores Salon");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(820, 680);
+        setSize(700, 600);
         setLocationRelativeTo(null);
 
         add(buildSignUpScreen());
@@ -46,7 +48,7 @@ public class SignUpFrame extends JFrame {
         JPanel center = new JPanel(new GridBagLayout());
         center.setOpaque(false);
 
-        JPanel card = makeCard(560);
+        JPanel card = makeCard(500);
 
         card.add(centerLabel("Create Account", TITLE, Color.BLACK));
         card.add(Box.createVerticalStrut(16));
@@ -127,7 +129,17 @@ public class SignUpFrame extends JFrame {
 
     public static boolean checkLogin(String mobile, String password) {
         String[] user = users.get(mobile);
-        return user != null && user[1].equals(password);
+
+        if (user != null && user[1].equals(password)) {
+            currentCustomerName = user[0];
+            return true;
+        }
+
+        return false;
+    }
+
+    public static String getCurrentCustomerName() {
+        return currentCustomerName;
     }
 
     private JPanel screenShell() {
@@ -140,10 +152,10 @@ public class SignUpFrame extends JFrame {
     private JPanel createHeader() {
         JPanel header = new JPanel(new GridBagLayout());
         header.setBackground(BROWN);
-        header.setPreferredSize(new Dimension(10, 65));
+        header.setPreferredSize(new Dimension(10, 55));
 
         JLabel salonName = new JLabel("Azores Salon");
-        salonName.setFont(new Font("Serif", Font.BOLD, 24));
+        salonName.setFont(new Font("Serif", Font.BOLD, 22));
         salonName.setForeground(Color.WHITE);
 
         header.add(salonName);
@@ -155,7 +167,7 @@ public class SignUpFrame extends JFrame {
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(Color.WHITE);
         card.setBorder(new CompoundBorder(new LineBorder(BROWN, 1), new EmptyBorder(28, 22, 24, 22)));
-        card.setPreferredSize(new Dimension(390, height));
+        card.setPreferredSize(new Dimension(360, height));
         return card;
     }
 
@@ -184,8 +196,8 @@ public class SignUpFrame extends JFrame {
         field.setFont(NORMAL);
         field.setBackground(Color.WHITE);
         field.setAlignmentX(Component.LEFT_ALIGNMENT);
-        field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
-        field.setPreferredSize(new Dimension(100, 38));
+        field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
+        field.setPreferredSize(new Dimension(100, 35));
         field.setBorder(new CompoundBorder(new LineBorder(FIELD_BORDER, 1), new EmptyBorder(4, 10, 4, 10)));
     }
 
@@ -198,8 +210,8 @@ public class SignUpFrame extends JFrame {
         button.setBorderPainted(false);
         button.setFocusPainted(false);
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        button.setPreferredSize(new Dimension(100, 40));
-        button.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        button.setPreferredSize(new Dimension(100, 38));
+        button.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         return button;
     }

@@ -25,7 +25,7 @@ public class ServicesFrame extends JFrame {
     public ServicesFrame() {
         super("Azores Salon");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(820, 680);
+        setSize(700, 600);
         setLocationRelativeTo(null);
 
         add(buildServicesScreen());
@@ -93,10 +93,10 @@ public class ServicesFrame extends JFrame {
     private JPanel createHeader() {
         JPanel header = new JPanel(new GridBagLayout());
         header.setBackground(BROWN);
-        header.setPreferredSize(new Dimension(10, 65));
+        header.setPreferredSize(new Dimension(10, 55));
 
         JLabel salonName = new JLabel("Azores Salon");
-        salonName.setFont(new Font("Serif", Font.BOLD, 24));
+        salonName.setFont(new Font("Serif", Font.BOLD, 22));
         salonName.setForeground(Color.WHITE);
 
         header.add(salonName);
@@ -112,7 +112,7 @@ public class ServicesFrame extends JFrame {
         JLabel imageLabel = new JLabel();
         imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        ImageIcon icon = loadIcon(imagePath, 95, 95);
+        ImageIcon icon = loadIcon(imagePath, 80, 80);
 
         if (icon != null) {
             imageLabel.setIcon(icon);
@@ -154,7 +154,7 @@ public class ServicesFrame extends JFrame {
         button.setBorderPainted(false);
         button.setFocusPainted(false);
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        button.setPreferredSize(new Dimension(150, 38));
+        button.setPreferredSize(new Dimension(135, 36));
         return button;
     }
 
@@ -168,10 +168,10 @@ public class ServicesFrame extends JFrame {
         button.setBorder(new LineBorder(BROWN, 1));
         button.setFocusPainted(false);
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        button.setPreferredSize(new Dimension(100, 36));
+        button.setPreferredSize(new Dimension(90, 34));
 
         if (imagePath != null) {
-            ImageIcon icon = loadIcon(imagePath, 17, 17);
+            ImageIcon icon = loadIcon(imagePath, 15, 15);
             if (icon != null) button.setIcon(icon);
         }
 

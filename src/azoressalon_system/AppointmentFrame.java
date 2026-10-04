@@ -41,7 +41,7 @@ public class AppointmentFrame extends JFrame {
         this.duration = duration;
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(820, 680);
+        setSize(700, 600);
         setLocationRelativeTo(null);
 
         add(buildAppointmentScreen());
@@ -74,7 +74,7 @@ public class AppointmentFrame extends JFrame {
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(Color.WHITE);
         card.setBorder(new CompoundBorder(new LineBorder(BROWN, 1), new EmptyBorder(18, 22, 22, 22)));
-        card.setPreferredSize(new Dimension(480, 430));
+        card.setPreferredSize(new Dimension(440, 390));
 
         card.add(label(serviceName, TITLE, Color.BLACK));
         card.add(label(description, SMALL, BROWN));
@@ -116,7 +116,7 @@ public class AppointmentFrame extends JFrame {
         JPanel buttons = new JPanel(new BorderLayout());
         buttons.setOpaque(false);
         buttons.setAlignmentX(Component.LEFT_ALIGNMENT);
-        buttons.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
+        buttons.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
 
         JButton back = makeSmallSecondaryButton("Back", "/images/back.png");
 
@@ -164,10 +164,10 @@ public class AppointmentFrame extends JFrame {
     private JPanel createHeader() {
         JPanel header = new JPanel(new GridBagLayout());
         header.setBackground(BROWN);
-        header.setPreferredSize(new Dimension(10, 65));
+        header.setPreferredSize(new Dimension(10, 55));
 
         JLabel salonName = new JLabel("Azores Salon");
-        salonName.setFont(new Font("Serif", Font.BOLD, 24));
+        salonName.setFont(new Font("Serif", Font.BOLD, 22));
         salonName.setForeground(Color.WHITE);
 
         header.add(salonName);
@@ -184,7 +184,7 @@ public class AppointmentFrame extends JFrame {
         button.setFocusPainted(false);
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         button.setMargin(new Insets(2, 6, 2, 6));
-        button.setPreferredSize(new Dimension(190, 42));
+        button.setPreferredSize(new Dimension(170, 38));
         return button;
     }
 
@@ -198,10 +198,10 @@ public class AppointmentFrame extends JFrame {
         button.setBorder(new LineBorder(BROWN, 1));
         button.setFocusPainted(false);
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        button.setPreferredSize(new Dimension(100, 36));
+        button.setPreferredSize(new Dimension(90, 34));
 
         if (imagePath != null) {
-            ImageIcon icon = loadIcon(imagePath, 17, 17);
+            ImageIcon icon = loadIcon(imagePath, 15, 15);
             if (icon != null) button.setIcon(icon);
         }
 
@@ -220,7 +220,7 @@ public class AppointmentFrame extends JFrame {
         box.setFont(NORMAL);
         box.setBackground(Color.WHITE);
         box.setAlignmentX(Component.LEFT_ALIGNMENT);
-        box.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
+        box.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
         box.setBorder(new LineBorder(BROWN, 1));
     }
 

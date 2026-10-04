@@ -31,7 +31,7 @@ public class LoginFrame extends JFrame {
     public LoginFrame() {
         super("Azores Salon");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(820, 680);
+        setSize(700, 600);
         setLocationRelativeTo(null);
 
         add(buildLoginScreen());
@@ -43,7 +43,7 @@ public class LoginFrame extends JFrame {
         JPanel center = new JPanel(new GridBagLayout());
         center.setOpaque(false);
 
-        JPanel card = makeCard(420);
+        JPanel card = makeCard(390);
 
         card.add(centerLabel("Welcome Back", TITLE, Color.BLACK));
         card.add(Box.createVerticalStrut(16));
@@ -106,10 +106,10 @@ public class LoginFrame extends JFrame {
     private JPanel createHeader() {
         JPanel header = new JPanel(new GridBagLayout());
         header.setBackground(BROWN);
-        header.setPreferredSize(new Dimension(10, 65));
+        header.setPreferredSize(new Dimension(10, 55));
 
         JLabel salonName = new JLabel("Azores Salon");
-        salonName.setFont(new Font("Serif", Font.BOLD, 24));
+        salonName.setFont(new Font("Serif", Font.BOLD, 22));
         salonName.setForeground(Color.WHITE);
 
         header.add(salonName);
@@ -121,7 +121,7 @@ public class LoginFrame extends JFrame {
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(Color.WHITE);
         card.setBorder(new CompoundBorder(new LineBorder(BROWN, 1), new EmptyBorder(28, 22, 24, 22)));
-        card.setPreferredSize(new Dimension(390, height));
+        card.setPreferredSize(new Dimension(360, height));
         return card;
     }
 
@@ -150,8 +150,8 @@ public class LoginFrame extends JFrame {
         field.setFont(NORMAL);
         field.setBackground(Color.WHITE);
         field.setAlignmentX(Component.LEFT_ALIGNMENT);
-        field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
-        field.setPreferredSize(new Dimension(100, 38));
+        field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
+        field.setPreferredSize(new Dimension(100, 35));
         field.setBorder(new CompoundBorder(new LineBorder(FIELD_BORDER, 1), new EmptyBorder(4, 10, 4, 10)));
     }
 
@@ -164,8 +164,8 @@ public class LoginFrame extends JFrame {
         button.setBorderPainted(false);
         button.setFocusPainted(false);
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        button.setPreferredSize(new Dimension(100, 40));
-        button.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        button.setPreferredSize(new Dimension(100, 38));
+        button.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         return button;
     }
