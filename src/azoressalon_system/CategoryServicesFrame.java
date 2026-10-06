@@ -14,6 +14,8 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.net.URL;
+import java.io.*;
+import java.util.ArrayList;
 
 public class CategoryServicesFrame extends JFrame {
 
@@ -76,7 +78,7 @@ public class CategoryServicesFrame extends JFrame {
 
         for (Object[] service : services) {
             list.add(serviceRow((String) service[0], (String) service[1], (int) service[2], (int) service[3]));
-            list.add(Box.createVerticalStrut(12));
+            list.add(Box.createVerticalStrut(8));
         }
 
         content.add(top, BorderLayout.NORTH);
@@ -105,7 +107,8 @@ public class CategoryServicesFrame extends JFrame {
         JPanel row = new JPanel(new BorderLayout(15, 0));
         row.setBackground(Color.WHITE);
         row.setBorder(new CompoundBorder(new LineBorder(BROWN, 1), new EmptyBorder(10, 15, 10, 15)));
-        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 95));
+        row.setPreferredSize(new Dimension(560, 92));
+        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 92));
 
         JPanel info = new JPanel();
         info.setLayout(new BoxLayout(info, BoxLayout.Y_AXIS));
@@ -145,39 +148,53 @@ public class CategoryServicesFrame extends JFrame {
     }
 
     private Object[][] getServices() {
-        if (category.equals("Hair")) {
-            return new Object[][]{
-                {"Blow Dry", "Professional blow dry service", 100, 45},
-                {"Hair Dye", "Professional hair coloring service", 150, 90},
-                {"Hair Cut", "Professional hair cutting service", 80, 30},
-                {"Hair Styling", "Hair styling for different occasions", 120, 60}
-            };
+
+        ArrayList<Object[]> services = new ArrayList<>();
+
+    try {
+        BufferedReader reader = new BufferedReader(new FileReader("services.txt"));
+
+        String line;
+        boolean readingCategory = false;
+
+        while ((line = reader.readLine()) != null) {
+
+            line = line.trim();
+
+            if (line.isEmpty()) {
+                continue;
+            }
+
+            if (line.startsWith("[") && line.endsWith("]")) {
+                String fileCategory = line.substring(1, line.length() - 1);
+                readingCategory = fileCategory.equalsIgnoreCase(category);
+                continue;
+            }
+
+            if (readingCategory) {
+                String[] parts = line.split("\\|");
+
+                if (parts.length == 4) {
+                    String name = parts[0];
+                    String description = parts[1];
+                    int price = Integer.parseInt(parts[2]);
+                    int duration = Integer.parseInt(parts[3]);
+
+                    services.add(new Object[]{name, description, price, duration});
+                }
+            }
         }
 
-        if (category.equals("Makeup")) {
-            return new Object[][]{
-                {"Full Makeup", "Complete makeup look", 170, 60},
-                {"Soft Makeup", "Simple and soft makeup look", 150, 50},
-                {"Eye Makeup", "Professional eye makeup", 80, 30},
-                {"Bridal Makeup", "Complete bridal makeup", 300, 120}
-            };
-        }
+        reader.close();
 
-        if (category.equals("Nails")) {
-            return new Object[][]{
-                {"Manicure", "Basic nail care for hands", 60, 30},
-                {"Pedicure", "Basic nail care for feet", 70, 40},
-                {"Gel Polish", "Long-lasting gel nail polish", 100, 45},
-                {"Nail Extensions", "Professional nail extensions", 180, 90}
-            };
-        }
+    } catch (IOException e) {
+        JOptionPane.showMessageDialog(this, "Error reading services.txt:\n" + e.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
 
-        return new Object[][]{
-            {"Facial", "Basic facial treatment", 80, 45},
-            {"Deep Cleansing", "Deep skin cleansing treatment", 120, 60},
-            {"Hydrating Facial", "Hydrating facial treatment", 130, 60},
-            {"Skin Treatment", "Special skin care treatment", 150, 75}
-        };
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Error: Price or duration in services.txt is not a number.", "File Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    return services.toArray(new Object[0][]);
     }
 
     private JButton makeMainButton(String text) {

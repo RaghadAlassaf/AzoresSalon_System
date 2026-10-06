@@ -42,3 +42,34 @@ Total: 100 SAR
 Status: Confirmed
 ==========================================
 
+========== Azores Salon Invoice ==========
+Booking ID: AZ-1001
+Customer Name: Raghad
+------------------------------------------
+Service: Blow Dry
+Date: September 22
+Time: 2:00 PM
+Price: 100 SAR
+------------------------------------------
+Service: Gel Polish
+Date: September 20
+Time: 4:00 PM
+Price: 100 SAR
+------------------------------------------
+Total: 200 SAR
+Status: Confirmed
+==========================================
+
+========== Azores Salon Invoice ==========
+Booking ID: AZ-1001
+Customer Name: قشلاشي
+------------------------------------------
+Service: Blow Dry
+Date: September 23
+Time: 2:00 PM
+Price: 100 SAR
+------------------------------------------
+Total: 100 SAR
+Status: Confirmed
+==========================================
+
