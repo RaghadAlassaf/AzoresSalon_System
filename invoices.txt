@@ -73,3 +73,21 @@ Total: 100 SAR
 Status: Confirmed
 ==========================================
 
+========== Azores Salon Invoice ==========
+Booking ID: AZ-1001
+Customer Name: Raghad
+------------------------------------------
+Service: Hair Dye
+Date: September 24
+Time: 6:00 PM
+Price: 150 SAR
+------------------------------------------
+Service: Gel Polish
+Date: September 24
+Time: 4:00 PM
+Price: 100 SAR
+------------------------------------------
+Total: 250 SAR
+Status: Confirmed
+==========================================
+

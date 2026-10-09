@@ -92,9 +92,7 @@ public class AppointmentFrame extends JFrame {
 
         card.add(label("Date", BOLD, Color.BLACK));
 
-        dateBox = new JComboBox<>(new String[]{
-            "September 20", "September 21", "September 22", "September 23", "September 24"
-        });
+        dateBox = new JComboBox<>(new String[]{ "September 20", "September 21", "September 22", "September 23", "September 24" });
 
         styleCombo(dateBox);
         card.add(dateBox);
@@ -102,9 +100,7 @@ public class AppointmentFrame extends JFrame {
 
         card.add(label("Time", BOLD, Color.BLACK));
 
-        timeBox = new JComboBox<>(new String[]{
-            "10:00 AM", "12:00 PM", "2:00 PM", "4:00 PM", "5:00 PM", "6:00 PM"
-        });
+        timeBox = new JComboBox<>(new String[]{"10:00 AM", "12:00 PM", "2:00 PM", "4:00 PM", "5:00 PM", "6:00 PM" });
 
         timeBox.setSelectedItem("4:00 PM");
         styleCombo(timeBox);

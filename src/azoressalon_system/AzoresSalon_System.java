@@ -16,7 +16,6 @@ public class AzoresSalon_System {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-   
         
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
