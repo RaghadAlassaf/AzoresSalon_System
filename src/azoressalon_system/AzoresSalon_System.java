@@ -15,6 +15,8 @@ public class AzoresSalon_System {
     /**
      * @param args the command line arguments
      */
+    
+    // Starts the application and opens the login screen
     public static void main(String[] args) {
         
         try {

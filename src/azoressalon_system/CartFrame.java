@@ -15,7 +15,9 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.net.URL;
 
+// Handles the shopping cart screen
 public class CartFrame extends JFrame {
 
     static final Color BROWN = new Color(0x73, 0x4B, 0x3A);
@@ -28,6 +30,7 @@ public class CartFrame extends JFrame {
     static final Font NORMAL = new Font("Serif", Font.PLAIN, 15);
     static final Font SMALL = new Font("Serif", Font.PLAIN, 13);
 
+    // Holds the service details for one item in the cart
     static class CartItem {
         String name, date, time;
         int price;
@@ -40,6 +43,7 @@ public class CartFrame extends JFrame {
         }
     }
 
+    // Stores the services added to the shopping cart
     private static final List<CartItem> cart = new ArrayList<>();
 
     private JPanel cartListPanel;
@@ -83,6 +87,7 @@ public class CartFrame extends JFrame {
         }
     }
 
+    // Adds a service if no other cart item has the same date and time
     public static boolean addToCart(String name, String date, String time, int price) {
         for (CartItem item : cart) {
             if (item.date.equals(date) && item.time.equals(time)) return false;
@@ -92,6 +97,7 @@ public class CartFrame extends JFrame {
         return true;
     }
 
+    // Creates the shopping cart screen
     private JPanel buildCartScreen() {
         JPanel shell = screenShell();
 
@@ -162,6 +168,7 @@ public class CartFrame extends JFrame {
         return shell;
     }
 
+    // Updates the cart items and total price
     private void refreshCart() {
         cartListPanel.removeAll();
         int total = 0;
@@ -184,6 +191,7 @@ public class CartFrame extends JFrame {
         cartListPanel.repaint();
     }
 
+    // Creates a row for a service in the cart
     private JPanel buildRow(CartItem item) {
         JPanel row = new JPanel(new BorderLayout(10, 0));
         row.setBackground(Color.WHITE);
@@ -227,6 +235,7 @@ public class CartFrame extends JFrame {
         return row;
     }
 
+    // Opens booking confirmation when the cart is not empty
     private void checkout() {
         if (cart.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Your cart is empty. Add a service first.");
@@ -237,6 +246,7 @@ public class CartFrame extends JFrame {
         dispose();
     }
 
+    // Creates the main screen container
     private JPanel screenShell() {
         JPanel shell = new JPanel(new BorderLayout());
         shell.setBackground(BEIGE);
@@ -244,6 +254,7 @@ public class CartFrame extends JFrame {
         return shell;
     }
 
+    // Creates the salon header
     private JPanel createHeader() {
         JPanel header = new JPanel(new GridBagLayout());
         header.setBackground(BROWN);
@@ -257,6 +268,7 @@ public class CartFrame extends JFrame {
         return header;
     }
 
+    // Creates a main action button
     private JButton makeMainButton(String text) {
         JButton button = new JButton(text);
         button.setFont(BOLD);
@@ -271,6 +283,7 @@ public class CartFrame extends JFrame {
         return button;
     }
 
+    // Creates a secondary navigation button
     private JButton makeSecondaryButton(String text) {
         JButton button = makeMainButton(text);
         button.setBackground(Color.WHITE);
@@ -280,6 +293,7 @@ public class CartFrame extends JFrame {
         return button;
     }
 
+    // Creates a label with the given font and color
     private JLabel label(String text, Font font, Color color) {
         JLabel label = new JLabel(text);
         label.setFont(font);
@@ -288,10 +302,12 @@ public class CartFrame extends JFrame {
         return label;
     }
 
+    // Returns the services currently in the cart
     public static List<CartItem> getCart() {
         return new ArrayList<>(cart);
     }
 
+    // Calculates the total price of the cart items
     public static int getTotal() {
         int total = 0;
 
@@ -302,6 +318,7 @@ public class CartFrame extends JFrame {
         return total;
     }
 
+    // Removes all items from the cart
     public static void clearCart() {
         cart.clear();
     }

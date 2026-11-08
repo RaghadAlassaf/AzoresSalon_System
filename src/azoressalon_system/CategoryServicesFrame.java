@@ -17,6 +17,7 @@ import java.net.URL;
 import java.io.*;
 import java.util.ArrayList;
 
+// Handles the services list for a selected category
 public class CategoryServicesFrame extends JFrame {
 
     static final Color BROWN = new Color(0x73, 0x4B, 0x3A);
@@ -38,6 +39,7 @@ public class CategoryServicesFrame extends JFrame {
         add(buildCategoryScreen());
     }
 
+    // Displays the services for the selected category
     private JPanel buildCategoryScreen() {
         JPanel shell = new JPanel(new BorderLayout());
         shell.setBackground(BEIGE);
@@ -90,6 +92,7 @@ public class CategoryServicesFrame extends JFrame {
         return shell;
     }
 
+    // Creates the salon header
     private JPanel createHeader() {
         JPanel header = new JPanel(new GridBagLayout());
         header.setBackground(BROWN);
@@ -103,6 +106,7 @@ public class CategoryServicesFrame extends JFrame {
         return header;
     }
 
+    // Creates a card showing a service and its booking button
     private JPanel serviceRow(String name, String description, int price, int duration) {
         JPanel row = new JPanel(new BorderLayout(15, 0));
         row.setBackground(Color.WHITE);
@@ -147,12 +151,12 @@ public class CategoryServicesFrame extends JFrame {
         return row;
     }
 
+    // Reads the services file and loads the selected category
     private Object[][] getServices() {
 
         ArrayList<Object[]> services = new ArrayList<>();
 
-    try {
-        BufferedReader reader = new BufferedReader(new FileReader("services.txt"));
+    try (BufferedReader reader = new BufferedReader(new FileReader("services.txt"))) {
 
         String line;
         boolean readingCategory = false;
@@ -174,29 +178,39 @@ public class CategoryServicesFrame extends JFrame {
             if (readingCategory) {
                 String[] parts = line.split("\\|");
 
-                if (parts.length == 4) {
-                    String name = parts[0];
-                    String description = parts[1];
-                    int price = Integer.parseInt(parts[2]);
-                    int duration = Integer.parseInt(parts[3]);
-
-                    services.add(new Object[]{name, description, price, duration});
+                if (parts.length != 4) {
+                    throw new IllegalArgumentException("Invalid service format: " + line);
                 }
+
+                String name = parts[0].trim();
+                String description = parts[1].trim();
+                int price = Integer.parseInt(parts[2].trim());
+                int duration = Integer.parseInt(parts[3].trim());
+
+                if (name.isEmpty() || description.isEmpty() || price < 0 || duration <= 0) {
+                    throw new IllegalArgumentException("Invalid service information: " + line);
+                }
+
+                services.add(new Object[]{name, description, price, duration});
             }
         }
 
-        reader.close();
-
     } catch (IOException e) {
-        JOptionPane.showMessageDialog(this, "Error reading services.txt:\n" + e.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
+        services.clear();
+        JOptionPane.showMessageDialog(this, "Unable to load salon services from services.txt.\n" + e.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
 
     } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Error: Price or duration in services.txt is not a number.", "File Error", JOptionPane.ERROR_MESSAGE);
+        services.clear();
+        JOptionPane.showMessageDialog(this, "Unable to load services: price and duration must be numbers in services.txt.", "File Error", JOptionPane.ERROR_MESSAGE);
+    } catch (IllegalArgumentException e) {
+        services.clear();
+        JOptionPane.showMessageDialog(this, "Unable to load services from services.txt.\n" + e.getMessage(), "Data Error", JOptionPane.ERROR_MESSAGE);
     }
 
     return services.toArray(new Object[0][]);
     }
 
+    // Creates a main action button
     private JButton makeMainButton(String text) {
         JButton button = new JButton(text);
         button.setFont(BOLD);
@@ -210,6 +224,7 @@ public class CategoryServicesFrame extends JFrame {
         return button;
     }
 
+    // Creates a secondary navigation button
     private JButton makeSecondaryButton(String text, String imagePath) {
         JButton button = new JButton(text);
         button.setFont(BOLD);
@@ -230,6 +245,7 @@ public class CategoryServicesFrame extends JFrame {
         return button;
     }
 
+    // Loads and resizes an image icon
     private ImageIcon loadIcon(String path, int width, int height) {
         URL imageURL = getClass().getResource(path);
         if (imageURL == null) return null;

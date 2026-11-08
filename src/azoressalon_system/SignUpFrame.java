@@ -16,6 +16,7 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+// Handles the customer registration screen
 public class SignUpFrame extends JFrame {
 
     static final Color BROWN = new Color(0x73, 0x4B, 0x3A);
@@ -27,6 +28,7 @@ public class SignUpFrame extends JFrame {
     static final Font BOLD = new Font("Serif", Font.BOLD, 16);
     static final Font NORMAL = new Font("Serif", Font.PLAIN, 15);
 
+    // Stores customer account details using the mobile number.
     private static final Map<String, String[]> users = new HashMap<>();
     private static String currentCustomerName;
 
@@ -42,6 +44,7 @@ public class SignUpFrame extends JFrame {
         add(buildSignUpScreen());
     }
 
+    // Creates the account registration form
     private JPanel buildSignUpScreen() {
         JPanel shell = screenShell();
 
@@ -88,6 +91,7 @@ public class SignUpFrame extends JFrame {
         return shell;
     }
 
+    // Validates the entered details and registers a new customer
     private void signUp() {
         String name = nameField.getText().trim();
         String mobile = mobileField.getText().trim();
@@ -127,6 +131,7 @@ public class SignUpFrame extends JFrame {
         dispose();
     }
 
+    // Checks the mobile number and password entered at login
     public static boolean checkLogin(String mobile, String password) {
         String[] user = users.get(mobile);
 
@@ -138,10 +143,17 @@ public class SignUpFrame extends JFrame {
         return false;
     }
 
+    // Returns the name of the logged-in customer
     public static String getCurrentCustomerName() {
         return currentCustomerName;
     }
+    
+    // Clears the current customer when logging out
+    public static void logout() {
+    currentCustomerName = null;
+    }
 
+    // Creates the main screen container
     private JPanel screenShell() {
         JPanel shell = new JPanel(new BorderLayout());
         shell.setBackground(BEIGE);
@@ -149,6 +161,7 @@ public class SignUpFrame extends JFrame {
         return shell;
     }
 
+    // Creates the salon header
     private JPanel createHeader() {
         JPanel header = new JPanel(new GridBagLayout());
         header.setBackground(BROWN);
@@ -162,6 +175,7 @@ public class SignUpFrame extends JFrame {
         return header;
     }
 
+    // Creates the form card
     private JPanel makeCard(int height) {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -171,6 +185,7 @@ public class SignUpFrame extends JFrame {
         return card;
     }
 
+    // Adds a label and input field to the form
     private JPanel fieldGroup(String title, JTextField field) {
         styleField(field);
 
@@ -192,6 +207,7 @@ public class SignUpFrame extends JFrame {
         return panel;
     }
 
+    // Sets the appearance of an input field
     private void styleField(JTextField field) {
         field.setFont(NORMAL);
         field.setBackground(Color.WHITE);
@@ -201,6 +217,7 @@ public class SignUpFrame extends JFrame {
         field.setBorder(new CompoundBorder(new LineBorder(FIELD_BORDER, 1), new EmptyBorder(4, 10, 4, 10)));
     }
 
+    // Creates a main action button
     private JButton makeMainButton(String text) {
         JButton button = new JButton(text);
         button.setFont(BOLD);
@@ -216,6 +233,7 @@ public class SignUpFrame extends JFrame {
         return button;
     }
 
+    // Creates a button styled as a text link
     private JButton makeLinkButton(String text) {
         JButton button = new JButton(text);
         button.setFont(BOLD);
@@ -228,6 +246,7 @@ public class SignUpFrame extends JFrame {
         return button;
     }
 
+    // Creates a centered text label
     private JLabel centerLabel(String text, Font font, Color color) {
         JLabel label = new JLabel(text);
         label.setFont(font);
@@ -236,6 +255,7 @@ public class SignUpFrame extends JFrame {
         return label;
     }
 
+    // Shows an error message to the customer
     private void showError(String message) {
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }

@@ -14,6 +14,7 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.net.URL;
 
+// Handles the salon categories screen
 public class ServicesFrame extends JFrame {
 
     static final Color BROWN = new Color(0x73, 0x4B, 0x3A);
@@ -31,6 +32,7 @@ public class ServicesFrame extends JFrame {
         add(buildServicesScreen());
     }
 
+    // Displays the available salon categories
     private JPanel buildServicesScreen() {
         JPanel shell = new JPanel(new BorderLayout());
         shell.setBackground(BEIGE);
@@ -46,8 +48,10 @@ public class ServicesFrame extends JFrame {
         JButton cart = makeSecondaryButton("Cart", "/images/cart.png");
 
         logout.addActionListener(e -> {
-            new LoginFrame().setVisible(true);
-            dispose();
+        CartFrame.clearCart();
+        SignUpFrame.logout();
+        new LoginFrame().setVisible(true);
+        dispose();
         });
 
         cart.addActionListener(e -> {
@@ -90,6 +94,7 @@ public class ServicesFrame extends JFrame {
         return shell;
     }
 
+    // Creates the salon header
     private JPanel createHeader() {
         JPanel header = new JPanel(new GridBagLayout());
         header.setBackground(BROWN);
@@ -103,6 +108,7 @@ public class ServicesFrame extends JFrame {
         return header;
     }
 
+    // Creates a category card and its View Services button
     private JPanel serviceCard(String category, String imagePath) {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -145,6 +151,7 @@ public class ServicesFrame extends JFrame {
         return card;
     }
 
+     // Creates a main action button
     private JButton makeMainButton(String text) {
         JButton button = new JButton(text);
         button.setFont(BOLD);
@@ -158,6 +165,7 @@ public class ServicesFrame extends JFrame {
         return button;
     }
 
+     // Creates a secondary navigation button
     private JButton makeSecondaryButton(String text, String imagePath) {
         JButton button = new JButton(text);
         button.setFont(BOLD);
@@ -178,6 +186,7 @@ public class ServicesFrame extends JFrame {
         return button;
     }
 
+    // Loads and resizes an image icon
     private ImageIcon loadIcon(String path, int width, int height) {
         URL imageURL = getClass().getResource(path);
         if (imageURL == null) return null;

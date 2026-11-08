@@ -14,6 +14,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 
+// Handles the customer login screen
 public class LoginFrame extends JFrame {
 
     static final Color BROWN = new Color(0x73, 0x4B, 0x3A);
@@ -37,6 +38,7 @@ public class LoginFrame extends JFrame {
         add(buildLoginScreen());
     }
 
+    // Creates the login form
     private JPanel buildLoginScreen() {
         JPanel shell = screenShell();
 
@@ -78,6 +80,7 @@ public class LoginFrame extends JFrame {
         return shell;
     }
 
+    // Checks the entered login details and opens the services screen
     private void login() {
         String mobile = mobileField.getText().trim();
         String password = new String(passwordField.getPassword());
@@ -96,6 +99,7 @@ public class LoginFrame extends JFrame {
         dispose();
     }
 
+    // Creates the main screen container
     private JPanel screenShell() {
         JPanel shell = new JPanel(new BorderLayout());
         shell.setBackground(BEIGE);
@@ -103,6 +107,7 @@ public class LoginFrame extends JFrame {
         return shell;
     }
 
+    // Creates the salon header
     private JPanel createHeader() {
         JPanel header = new JPanel(new GridBagLayout());
         header.setBackground(BROWN);
@@ -116,6 +121,7 @@ public class LoginFrame extends JFrame {
         return header;
     }
 
+    // Creates the form card
     private JPanel makeCard(int height) {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -125,6 +131,7 @@ public class LoginFrame extends JFrame {
         return card;
     }
 
+    // Adds a label and input field to the form
     private JPanel fieldGroup(String title, JTextField field) {
         styleField(field);
 
@@ -146,6 +153,7 @@ public class LoginFrame extends JFrame {
         return panel;
     }
 
+    // Sets the appearance of an input field
     private void styleField(JTextField field) {
         field.setFont(NORMAL);
         field.setBackground(Color.WHITE);
@@ -155,6 +163,7 @@ public class LoginFrame extends JFrame {
         field.setBorder(new CompoundBorder(new LineBorder(FIELD_BORDER, 1), new EmptyBorder(4, 10, 4, 10)));
     }
 
+    // Creates a main action button
     private JButton makeMainButton(String text) {
         JButton button = new JButton(text);
         button.setFont(BOLD);
@@ -170,6 +179,7 @@ public class LoginFrame extends JFrame {
         return button;
     }
 
+    // Creates a button styled as a text link
     private JButton makeLinkButton(String text) {
         JButton button = new JButton(text);
         button.setFont(BOLD);
@@ -182,6 +192,7 @@ public class LoginFrame extends JFrame {
         return button;
     }
 
+    // Creates a centered text label
     private JLabel centerLabel(String text, Font font, Color color) {
         JLabel label = new JLabel(text);
         label.setFont(font);
@@ -190,6 +201,7 @@ public class LoginFrame extends JFrame {
         return label;
     }
 
+    // Shows an error message to the customer
     private void showError(String message) {
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }

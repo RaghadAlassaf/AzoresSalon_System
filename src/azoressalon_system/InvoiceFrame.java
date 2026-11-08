@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.List;
 import java.io.*;
 
+// Handles the confirmed booking and invoice screen
 public class InvoiceFrame extends JFrame {
 
     static final Color BROWN = new Color(0x73, 0x4B, 0x3A);
@@ -28,24 +29,24 @@ public class InvoiceFrame extends JFrame {
     static final Font NORMAL = new Font("Serif", Font.PLAIN, 15);
     static final Font SMALL = new Font("Serif", Font.PLAIN, 13);
 
-    private static int bookingCounter = 1001;
-
     private final String bookingId;
 
-    public InvoiceFrame() {
+    public InvoiceFrame() throws IOException {
         super("Azores Salon");
 
-        bookingId = "AZ-" + bookingCounter++;
+        bookingId = generateBookingId();
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(700, 600);
         setLocationRelativeTo(null);
 
-        add(buildInvoiceScreen());
-
+        // Save the invoice before showing the booking as confirmed
         saveInvoiceToFile();
+
+        add(buildInvoiceScreen());
     }
 
+    // Displays the confirmed booking and invoice details
     private JPanel buildInvoiceScreen() {
         JPanel shell = screenShell();
 
@@ -131,6 +132,7 @@ public class InvoiceFrame extends JFrame {
         return shell;
     }
 
+    // Creates the table of booked services
     private JPanel buildOrderTable(List<CartFrame.CartItem> items) {
         JPanel table = new JPanel();
         table.setLayout(new BoxLayout(table, BoxLayout.Y_AXIS));
@@ -152,6 +154,7 @@ public class InvoiceFrame extends JFrame {
         return table;
     }
 
+    // Creates one row of the service table
     private JPanel tableRow(String service, String date, String time, String price, boolean header) {
         JPanel row = new JPanel(new GridLayout(1, 4));
         row.setBackground(Color.WHITE);
@@ -165,6 +168,7 @@ public class InvoiceFrame extends JFrame {
         return row;
     }
 
+    // Creates the main screen container
     private JPanel screenShell() {
         JPanel shell = new JPanel(new BorderLayout());
         shell.setBackground(BEIGE);
@@ -173,6 +177,7 @@ public class InvoiceFrame extends JFrame {
         return shell;
     }
 
+    // Creates the salon header
     private JPanel createHeader() {
         JPanel header = new JPanel(new GridBagLayout());
         header.setBackground(BROWN);
@@ -187,6 +192,7 @@ public class InvoiceFrame extends JFrame {
         return header;
     }
 
+    // Creates a small navigation button
     private JButton makeSmallSecondaryButton(String text, String imagePath) {
         JButton button = new JButton(text);
         button.setFont(BOLD);
@@ -207,6 +213,7 @@ public class InvoiceFrame extends JFrame {
         return button;
     }
 
+    // Creates a label with the given font and color
     private JLabel label(String text, Font font, Color color) {
         JLabel label = new JLabel(text);
         label.setFont(font);
@@ -215,6 +222,7 @@ public class InvoiceFrame extends JFrame {
         return label;
     }
 
+    // Loads and resizes an image icon
     private ImageIcon loadIcon(String path, int width, int height) {
         URL imageURL = getClass().getResource(path);
 
@@ -226,11 +234,40 @@ public class InvoiceFrame extends JFrame {
         return new ImageIcon(image);
     }
 
-    private void saveInvoiceToFile() {
+    // Generates the next booking ID based on saved invoices
+    private String generateBookingId() throws IOException {
+    int lastId = 1000;
+    File file = new File("invoices.txt");
+
+    if (file.exists()) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("Booking ID: AZ-")) {
+                    String id = line.substring("Booking ID: AZ-".length()).trim();
+
+                    try {
+                        int number = Integer.parseInt(id);
+                        if (number > lastId) {
+                            lastId = number;
+                        }
+                    } catch (NumberFormatException e) {
+                        // Skips booking IDs that are not numeric
+                    }
+                }
+            }
+        }
+    }
+
+    return "AZ-" + (lastId + 1);
+}
+
+    // Appends the confirmed invoice details to invoices.txt
+    private void saveInvoiceToFile() throws IOException {
         String customerName = SignUpFrame.getCurrentCustomerName();
 
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("invoices.txt", true));
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("invoices.txt", true))) {
 
             writer.write("========== Azores Salon Invoice ==========");
             writer.newLine();
@@ -262,10 +299,6 @@ public class InvoiceFrame extends JFrame {
             writer.newLine();
             writer.newLine();
 
-            writer.close();
-
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error saving invoice.", "File Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

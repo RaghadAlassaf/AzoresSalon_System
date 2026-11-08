@@ -10,11 +10,13 @@ package azoressalon_system;
  */
 
 import javax.swing.*;
+import java.io.IOException;
 import javax.swing.border.*;
 import java.awt.*;
 import java.net.URL;
 import java.util.List;
 
+// Handles the booking review screen
 public class BookingConfirmationFrame extends JFrame {
 
     static final Color BROWN = new Color(0x73, 0x4B, 0x3A);
@@ -36,6 +38,7 @@ public class BookingConfirmationFrame extends JFrame {
         add(buildConfirmationScreen());
     }
 
+    // Displays the selected services before the booking is confirmed
     private JPanel buildConfirmationScreen() {
         JPanel shell = screenShell();
 
@@ -92,8 +95,12 @@ public class BookingConfirmationFrame extends JFrame {
         JButton confirm = makeMainButton("Confirm Booking");
 
         confirm.addActionListener(e -> {
-            new InvoiceFrame().setVisible(true);
-            dispose();
+            try {
+                new InvoiceFrame().setVisible(true);
+                dispose();
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Booking could not be confirmed because the invoice was not saved.\nPlease check the invoices file and try again.\n" + ex.getMessage(), "Booking Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         buttons.add(back, BorderLayout.WEST);
@@ -107,6 +114,7 @@ public class BookingConfirmationFrame extends JFrame {
         return shell;
     }
 
+    // Creates the table of selected services
     private JPanel buildOrderTable(List<CartFrame.CartItem> items) {
         JPanel table = new JPanel();
         table.setLayout(new BoxLayout(table, BoxLayout.Y_AXIS));
@@ -128,6 +136,7 @@ public class BookingConfirmationFrame extends JFrame {
         return table;
     }
 
+    // Creates one row of the booking summary
     private JPanel tableRow(String service, String date, String time, String price, boolean header) {
         JPanel row = new JPanel(new GridLayout(1, 4));
         row.setBackground(Color.WHITE);
@@ -141,6 +150,7 @@ public class BookingConfirmationFrame extends JFrame {
         return row;
     }
 
+    // Creates the main screen container
     private JPanel screenShell() {
         JPanel shell = new JPanel(new BorderLayout());
         shell.setBackground(BEIGE);
@@ -148,6 +158,7 @@ public class BookingConfirmationFrame extends JFrame {
         return shell;
     }
 
+    // Creates the salon header
     private JPanel createHeader() {
         JPanel header = new JPanel(new GridBagLayout());
         header.setBackground(BROWN);
@@ -162,6 +173,7 @@ public class BookingConfirmationFrame extends JFrame {
         return header;
     }
 
+    // Creates a main action button
     private JButton makeMainButton(String text) {
         JButton button = new JButton(text);
         button.setFont(BOLD);
@@ -176,6 +188,7 @@ public class BookingConfirmationFrame extends JFrame {
         return button;
     }
 
+    // Creates a small navigation button
     private JButton makeSmallSecondaryButton(String text, String imagePath) {
         JButton button = new JButton(text);
         button.setFont(BOLD);
@@ -196,6 +209,7 @@ public class BookingConfirmationFrame extends JFrame {
         return button;
     }
 
+    // Creates a label with the given font and color
     private JLabel label(String text, Font font, Color color) {
         JLabel label = new JLabel(text);
         label.setFont(font);
@@ -204,6 +218,7 @@ public class BookingConfirmationFrame extends JFrame {
         return label;
     }
 
+    // Loads and resizes an image icon
     private ImageIcon loadIcon(String path, int width, int height) {
         URL imageURL = getClass().getResource(path);
 

@@ -14,6 +14,8 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.net.URL;
 
+// Handles the appointment selection screen
+
 public class AppointmentFrame extends JFrame {
 
     static final Color BROWN = new Color(0x73, 0x4B, 0x3A);
@@ -47,6 +49,7 @@ public class AppointmentFrame extends JFrame {
         add(buildAppointmentScreen());
     }
 
+    // Builds the appointment details screen
     private JPanel buildAppointmentScreen() {
         JPanel shell = screenShell();
 
@@ -137,6 +140,7 @@ public class AppointmentFrame extends JFrame {
         return shell;
     }
 
+    // Checks the selected appointment and adds the service to the cart
     private void addToCart() {
         String date = (String) dateBox.getSelectedItem();
         String time = (String) timeBox.getSelectedItem();
@@ -150,6 +154,7 @@ public class AppointmentFrame extends JFrame {
         dispose();
     }
 
+    // Creates the main screen container
     private JPanel screenShell() {
         JPanel shell = new JPanel(new BorderLayout());
         shell.setBackground(BEIGE);
@@ -157,6 +162,7 @@ public class AppointmentFrame extends JFrame {
         return shell;
     }
 
+    // Creates the salon header
     private JPanel createHeader() {
         JPanel header = new JPanel(new GridBagLayout());
         header.setBackground(BROWN);
@@ -170,6 +176,7 @@ public class AppointmentFrame extends JFrame {
         return header;
     }
 
+    // Creates a main action button
     private JButton makeMainButton(String text) {
         JButton button = new JButton(text);
         button.setFont(BOLD);
@@ -184,6 +191,7 @@ public class AppointmentFrame extends JFrame {
         return button;
     }
 
+    // Creates a small navigation button
     private JButton makeSmallSecondaryButton(String text, String imagePath) {
         JButton button = new JButton(text);
         button.setFont(BOLD);
@@ -204,6 +212,7 @@ public class AppointmentFrame extends JFrame {
         return button;
     }
 
+    // Creates a label with the given font and color
     private JLabel label(String text, Font font, Color color) {
         JLabel label = new JLabel(text);
         label.setFont(font);
@@ -212,6 +221,7 @@ public class AppointmentFrame extends JFrame {
         return label;
     }
 
+    // Sets the size and appearance of the date and time lists
     private void styleCombo(JComboBox<String> box) {
         box.setFont(NORMAL);
         box.setBackground(Color.WHITE);
@@ -220,6 +230,7 @@ public class AppointmentFrame extends JFrame {
         box.setBorder(new LineBorder(BROWN, 1));
     }
 
+    // Creates a panel with two lines of text
     private JPanel twoLines(String top, String bottom) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -232,6 +243,7 @@ public class AppointmentFrame extends JFrame {
         return panel;
     }
 
+    // Loads and resizes an image icon
     private ImageIcon loadIcon(String path, int width, int height) {
         URL imageURL = getClass().getResource(path);
         if (imageURL == null) return null;

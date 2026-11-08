@@ -91,3 +91,52 @@ Total: 250 SAR
 Status: Confirmed
 ==========================================
 
+========== Azores Salon Invoice ==========
+Booking ID: AZ-1001
+Customer Name: raghad
+------------------------------------------
+Service: Blow Dry
+Date: September 20
+Time: 4:00 PM
+Price: 100 SAR
+------------------------------------------
+Service: Soft Makeup
+Date: September 20
+Time: 5:00 PM
+Price: 150 SAR
+------------------------------------------
+Total: 250 SAR
+Status: Confirmed
+==========================================
+
+========== Azores Salon Invoice ==========
+Booking ID: AZ-180eb03d-d0f6-4ebe-bbf8-e6ee8b895598
+Customer Name: raghad
+------------------------------------------
+Service: Hair Dye
+Date: September 20
+Time: 4:00 PM
+Price: 150 SAR
+------------------------------------------
+Service: Deep Cleansing
+Date: September 20
+Time: 12:00 PM
+Price: 120 SAR
+------------------------------------------
+Total: 270 SAR
+Status: Confirmed
+==========================================
+
+========== Azores Salon Invoice ==========
+Booking ID: AZ-1003
+Customer Name: raghad
+------------------------------------------
+Service: Hair Dye
+Date: September 20
+Time: 4:00 PM
+Price: 150 SAR
+------------------------------------------
+Total: 150 SAR
+Status: Confirmed
+==========================================
+
