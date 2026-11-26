@@ -13,6 +13,9 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 // Handles the appointment selection screen
 
@@ -95,7 +98,7 @@ public class AppointmentFrame extends JFrame {
 
         card.add(label("Date", BOLD, Color.BLACK));
 
-        dateBox = new JComboBox<>(new String[]{ "September 20", "September 21", "September 22", "September 23", "September 24" });
+       dateBox = new JComboBox<>(getAvailableDates());
 
         styleCombo(dateBox);
         card.add(dateBox);
@@ -253,4 +256,17 @@ public class AppointmentFrame extends JFrame {
 
         return new ImageIcon(image);
     }
+    
+    // Generates the available appointment dates for the next five days
+    private String[] getAvailableDates() {
+    String[] dates = new String[5];
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d yyyy", Locale.ENGLISH);
+
+    for (int i = 0; i < dates.length; i++) {
+        dates[i] = LocalDate.now().plusDays(i + 1).format(formatter);
+    }
+
+    return dates;
+    }
+    
 }

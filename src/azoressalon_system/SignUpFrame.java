@@ -9,12 +9,11 @@ package azoressalon_system;
  * @author ragha
  */
 
-
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.util.List;
 
 // Handles the customer registration screen
 public class SignUpFrame extends JFrame {
@@ -28,24 +27,28 @@ public class SignUpFrame extends JFrame {
     static final Font BOLD = new Font("Serif", Font.BOLD, 16);
     static final Font NORMAL = new Font("Serif", Font.PLAIN, 15);
 
-    // Stores customer account details using the mobile number.
-    private static final Map<String, String[]> users = new HashMap<>();
+    // Stores the information of the currently logged-in customer
     private static String currentCustomerName;
+    private static int currentCustomerId = -1;
+
+    // Stores the session token received from the server
+    private static String currentSessionToken;
 
     private JTextField nameField, mobileField;
     private JPasswordField passwordField, confirmPasswordField;
+    private JButton createButton, loginButton;
 
     public SignUpFrame() {
         super("Azores Salon");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(700, 600);
         setLocationRelativeTo(null);
-
         add(buildSignUpScreen());
     }
 
     // Creates the account registration form
     private JPanel buildSignUpScreen() {
+
         JPanel shell = screenShell();
 
         JPanel center = new JPanel(new GridBagLayout());
@@ -63,27 +66,31 @@ public class SignUpFrame extends JFrame {
 
         card.add(fieldGroup("Full Name", nameField));
         card.add(Box.createVerticalStrut(10));
+
         card.add(fieldGroup("Mobile Number", mobileField));
         card.add(Box.createVerticalStrut(10));
+
         card.add(fieldGroup("Password", passwordField));
         card.add(Box.createVerticalStrut(10));
+
         card.add(fieldGroup("Confirm Password", confirmPasswordField));
         card.add(Box.createVerticalStrut(16));
 
-        JButton create = makeMainButton("Create Account");
-        create.addActionListener(e -> signUp());
-        card.add(create);
+        createButton = makeMainButton("Create Account");
+        createButton.addActionListener(e -> signUp());
+        card.add(createButton);
 
         card.add(Box.createVerticalStrut(14));
         card.add(centerLabel("Already have an account?", NORMAL, LABEL_TEXT));
 
-        JButton login = makeLinkButton("Login");
-        login.addActionListener(e -> {
+        loginButton = makeLinkButton("Login");
+
+        loginButton.addActionListener(e -> {
             new LoginFrame().setVisible(true);
             dispose();
         });
 
-        card.add(login);
+        card.add(loginButton);
 
         center.add(card);
         shell.add(center, BorderLayout.CENTER);
@@ -91,78 +98,171 @@ public class SignUpFrame extends JFrame {
         return shell;
     }
 
-    // Validates the entered details and registers a new customer
+    // Validates the entered details and sends a registration request
     private void signUp() {
+
         String name = nameField.getText().trim();
         String mobile = mobileField.getText().trim();
         String password = new String(passwordField.getPassword());
         String confirm = new String(confirmPasswordField.getPassword());
 
+        // Checks that all required fields are filled
         if (name.isEmpty() || mobile.isEmpty() || password.isEmpty() || confirm.isEmpty()) {
             showError("Please fill in all fields.");
             return;
         }
 
+        // Validates the customer's full name length
+        if (name.length() > 100) {
+            showError("Full name must not exceed 100 characters.");
+            return;
+        }
+
+        // Validates the mobile number format
         if (!mobile.matches("05\\d{8}")) {
             showError("Mobile number must be 10 digits and start with 05.");
             return;
         }
 
-        if (password.length() < 6) {
-            showError("Password must be at least 6 characters.");
+        // Validates the password length
+        if (password.length() < 6 || password.length() > 255) {
+            showError("Password must contain between 6 and 255 characters.");
             return;
         }
 
+        // Checks that both passwords match
         if (!password.equals(confirm)) {
             showError("Passwords do not match.");
             return;
         }
 
-        if (users.containsKey(mobile)) {
-            showError("This mobile number is already registered.");
-            return;
-        }
+        // Prevents repeated submissions during registration
+        setFormEnabled(false);
 
-        users.put(mobile, new String[]{name, password});
+        // Performs network communication in a background thread
+        Runnable registrationTask = () -> {
+            try {
+                SalonClient.signUp(name, mobile, password);
 
-        JOptionPane.showMessageDialog(this, "Account created successfully!\nYou can login now.");
+                // Updates Swing components on the event dispatch thread
+                SwingUtilities.invokeLater(() -> {
+                    if (!isDisplayable()) {
+                        return;
+                    }
+                    JOptionPane.showMessageDialog(SignUpFrame.this, "Account created successfully!\nYou can login now.");
+                    new LoginFrame().setVisible(true);
+                    dispose();
+                });
 
-        new LoginFrame().setVisible(true);
-        dispose();
+            } catch (IOException ex) {
+                SwingUtilities.invokeLater(() -> {
+                    if (isDisplayable()) {
+                        showError(ex.getMessage());
+                        setFormEnabled(true);
+                    }
+                });
+            } catch (RuntimeException ex) {
+                System.err.println("Registration error: " + ex.getMessage());
+                SwingUtilities.invokeLater(() -> {
+                    if (isDisplayable()) {
+                        showError("An unexpected error occurred during registration. Please verify your account status.");
+                        setFormEnabled(true);
+                    }
+                });
+            }
+        };
+
+        Thread thread = new Thread(registrationTask);
+        thread.start();
     }
 
-    // Checks the mobile number and password entered at login
-    public static boolean checkLogin(String mobile, String password) {
-        String[] user = users.get(mobile);
+    // Sends login credentials to the server for authentication
+    public static boolean checkLogin(String mobile, String password) throws IOException {
 
-        if (user != null && user[1].equals(password)) {
-            currentCustomerName = user[0];
-            return true;
+        // Clears any previous customer session
+        logout();
+
+        // Receives the authentication result from the server
+        List<String> response = SalonClient.login(mobile, password);
+
+        // An empty response indicates incorrect login credentials
+        if (response.isEmpty()) {
+            return false;
         }
 
-        return false;
+        // Stores the authenticated customer's information
+        currentCustomerId = Integer.parseInt(response.get(0));
+        currentCustomerName = response.get(1);
+
+        // Stores the session token for future authenticated requests
+        currentSessionToken = response.get(2);
+
+        return true;
     }
 
     // Returns the name of the logged-in customer
     public static String getCurrentCustomerName() {
         return currentCustomerName;
     }
-    
-    // Clears the current customer when logging out
+
+    // Returns the unique ID of the logged-in customer
+    public static int getCurrentCustomerId() {
+        return currentCustomerId;
+    }
+
+    // Returns the session token of the logged-in customer
+    public static String getCurrentSessionToken() {
+        return currentSessionToken;
+    }
+
+    // Ends the server session and clears the local customer information
     public static void logout() {
-    currentCustomerName = null;
+
+        try {
+
+            // Requests the server to invalidate the current session
+            if (currentSessionToken != null) {
+                SalonClient.logout(currentSessionToken);
+            }
+
+        } catch (IOException ex) {
+
+            // Reports a failure to terminate the server session
+            System.err.println("Logout error: " + ex.getMessage());
+
+        } finally {
+
+            // Clears local customer information even if the server is unavailable
+            currentCustomerName = null;
+            currentCustomerId = -1;
+            currentSessionToken = null;
+        }
+    }
+
+    // Enables or disables the form during registration
+    private void setFormEnabled(boolean enabled) {
+
+        nameField.setEnabled(enabled);
+        mobileField.setEnabled(enabled);
+        passwordField.setEnabled(enabled);
+        confirmPasswordField.setEnabled(enabled);
+        createButton.setEnabled(enabled);
+        loginButton.setEnabled(enabled);
     }
 
     // Creates the main screen container
     private JPanel screenShell() {
+
         JPanel shell = new JPanel(new BorderLayout());
         shell.setBackground(BEIGE);
         shell.add(createHeader(), BorderLayout.NORTH);
+
         return shell;
     }
 
     // Creates the salon header
     private JPanel createHeader() {
+
         JPanel header = new JPanel(new GridBagLayout());
         header.setBackground(BROWN);
         header.setPreferredSize(new Dimension(10, 55));
@@ -170,23 +270,27 @@ public class SignUpFrame extends JFrame {
         JLabel salonName = new JLabel("Azores Salon");
         salonName.setFont(new Font("Serif", Font.BOLD, 22));
         salonName.setForeground(Color.WHITE);
-
         header.add(salonName);
+
         return header;
     }
 
     // Creates the form card
     private JPanel makeCard(int height) {
+
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(Color.WHITE);
+
         card.setBorder(new CompoundBorder(new LineBorder(BROWN, 1), new EmptyBorder(28, 22, 24, 22)));
         card.setPreferredSize(new Dimension(360, height));
+
         return card;
     }
 
     // Adds a label and input field to the form
     private JPanel fieldGroup(String title, JTextField field) {
+
         styleField(field);
 
         JPanel panel = new JPanel();
@@ -209,17 +313,21 @@ public class SignUpFrame extends JFrame {
 
     // Sets the appearance of an input field
     private void styleField(JTextField field) {
+
         field.setFont(NORMAL);
         field.setBackground(Color.WHITE);
         field.setAlignmentX(Component.LEFT_ALIGNMENT);
         field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
         field.setPreferredSize(new Dimension(100, 35));
+
         field.setBorder(new CompoundBorder(new LineBorder(FIELD_BORDER, 1), new EmptyBorder(4, 10, 4, 10)));
     }
 
     // Creates a main action button
     private JButton makeMainButton(String text) {
+
         JButton button = new JButton(text);
+
         button.setFont(BOLD);
         button.setBackground(BROWN);
         button.setForeground(Color.WHITE);
@@ -230,12 +338,15 @@ public class SignUpFrame extends JFrame {
         button.setPreferredSize(new Dimension(100, 38));
         button.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
         return button;
     }
 
     // Creates a button styled as a text link
     private JButton makeLinkButton(String text) {
+
         JButton button = new JButton(text);
+
         button.setFont(BOLD);
         button.setForeground(BROWN);
         button.setContentAreaFilled(false);
@@ -243,20 +354,24 @@ public class SignUpFrame extends JFrame {
         button.setFocusPainted(false);
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
         return button;
     }
 
     // Creates a centered text label
     private JLabel centerLabel(String text, Font font, Color color) {
+
         JLabel label = new JLabel(text);
         label.setFont(font);
         label.setForeground(color);
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         return label;
     }
 
-    // Shows an error message to the customer
+    // Shows a descriptive error message to the customer
     private void showError(String message) {
+
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 }

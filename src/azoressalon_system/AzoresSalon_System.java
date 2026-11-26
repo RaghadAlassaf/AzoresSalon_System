@@ -16,16 +16,21 @@ public class AzoresSalon_System {
      * @param args the command line arguments
      */
     
-    // Starts the application and opens the login screen
+    // Main entry point of the Azores Salon client application.
     public static void main(String[] args) {
-        
+    
+    // Sets a consistent appearance for the graphical user interface
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-        } catch (Exception ignored) {
+
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+            System.err.println("Could not initialize the interface appearance: " + ex.getMessage());
         }
 
-        SwingUtilities.invokeLater(() -> new LoginFrame().setVisible(true));
-        
+        // Starts the client GUI on the Event Dispatch Thread
+        SwingUtilities.invokeLater(() -> {
+            new LoginFrame().setVisible(true);
+        });
     }
-    
 }
+      

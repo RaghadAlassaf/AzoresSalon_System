@@ -9,25 +9,26 @@ package azoressalon_system;
  * @author ragha
  */
 
-
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-
+import java.io.IOException;
+        
 // Handles the customer login screen
 public class LoginFrame extends JFrame {
 
-    static final Color BROWN = new Color(0x73, 0x4B, 0x3A);
+static final Color BROWN = new Color(0x73, 0x4B, 0x3A);
     static final Color BEIGE = new Color(0xE9, 0xDF, 0xDA);
     static final Color FIELD_BORDER = new Color(0xCF, 0xC8, 0xC5);
     static final Color LABEL_TEXT = new Color(0x6B, 0x5A, 0x57);
-
+    
     static final Font TITLE = new Font("Serif", Font.BOLD, 30);
     static final Font BOLD = new Font("Serif", Font.BOLD, 16);
     static final Font NORMAL = new Font("Serif", Font.PLAIN, 15);
 
     private JTextField mobileField;
     private JPasswordField passwordField;
+    private JButton loginButton, signUpButton;
 
     public LoginFrame() {
         super("Azores Salon");
@@ -58,20 +59,20 @@ public class LoginFrame extends JFrame {
         card.add(fieldGroup("Password", passwordField));
         card.add(Box.createVerticalStrut(16));
 
-        JButton login = makeMainButton("Login");
-        login.addActionListener(e -> login());
-        card.add(login);
+        loginButton = makeMainButton("Login");
+        loginButton.addActionListener(e -> login());
+        card.add(loginButton);
 
         card.add(Box.createVerticalStrut(14));
         card.add(centerLabel("Don't have an account?", NORMAL, LABEL_TEXT));
 
-        JButton signUp = makeLinkButton("Sign Up");
-        signUp.addActionListener(e -> {
+        signUpButton = makeLinkButton("Sign Up");
+        signUpButton.addActionListener(e -> {
             new SignUpFrame().setVisible(true);
             dispose();
         });
 
-        card.add(signUp);
+        card.add(signUpButton);
         card.add(Box.createVerticalGlue());
 
         center.add(card);
@@ -80,23 +81,77 @@ public class LoginFrame extends JFrame {
         return shell;
     }
 
-    // Checks the entered login details and opens the services screen
+    // Validates the login details and sends an authentication request
     private void login() {
         String mobile = mobileField.getText().trim();
         String password = new String(passwordField.getPassword());
 
+        // Checks that all required fields are filled
         if (mobile.isEmpty() || password.isEmpty()) {
             showError("Please enter your mobile number and password.");
             return;
         }
 
-        if (!SignUpFrame.checkLogin(mobile, password)) {
-            showError("Wrong mobile number or password.");
+        // Validates the mobile number format
+        if (!mobile.matches("05\\d{8}")) {
+            showError("Mobile number must be 10 digits and start with 05.");
             return;
         }
 
-        new ServicesFrame().setVisible(true);
-        dispose();
+        // Prevents repeated login attempts while processing the request
+        setFormEnabled(false);
+
+        // Performs network communication in a background thread
+        Runnable loginTask = () -> {
+            try {
+                boolean loggedIn = SignUpFrame.checkLogin(mobile, password);
+
+                // Updates the GUI on the event dispatch thread
+                SwingUtilities.invokeLater(() -> {
+                    if (!isDisplayable()) {
+                        return;
+                    }
+
+                    setFormEnabled(true);
+
+                    if (!loggedIn) {
+                        showError("Wrong mobile number or password.");
+                        return;
+                    }
+
+                    new ServicesFrame().setVisible(true);
+                    dispose();
+                });
+
+            } catch (IOException ex) {
+                SwingUtilities.invokeLater(() -> {
+                    if (isDisplayable()) {
+                        setFormEnabled(true);
+                        showError(ex.getMessage());
+                    }
+                });
+
+            } catch (RuntimeException ex) {
+                System.err.println("Login error: " + ex.getMessage());
+                SwingUtilities.invokeLater(() -> {
+                    if (isDisplayable()) {
+                        setFormEnabled(true);
+                        showError("An unexpected error occurred during login.");
+                    }
+                });
+            }
+        };
+
+        Thread loginThread = new Thread(loginTask);
+        loginThread.start();
+    }
+
+    // Enables or disables the form during login
+    private void setFormEnabled(boolean enabled) {
+        mobileField.setEnabled(enabled);
+        passwordField.setEnabled(enabled);
+        loginButton.setEnabled(enabled);
+        signUpButton.setEnabled(enabled);
     }
 
     // Creates the main screen container
@@ -201,7 +256,7 @@ public class LoginFrame extends JFrame {
         return label;
     }
 
-    // Shows an error message to the customer
+    // Shows a descriptive error message to the customer
     private void showError(String message) {
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }

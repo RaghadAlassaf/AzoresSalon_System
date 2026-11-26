@@ -9,13 +9,13 @@ package azoressalon_system;
  * @author ragha
  */
 
-
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.net.URL;
-import java.io.*;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 // Handles the services list for a selected category
 public class CategoryServicesFrame extends JFrame {
@@ -76,18 +76,14 @@ public class CategoryServicesFrame extends JFrame {
         list.setLayout(new BoxLayout(list, BoxLayout.Y_AXIS));
         list.setOpaque(false);
 
-        Object[][] services = getServices();
-
-        for (Object[] service : services) {
-            list.add(serviceRow((String) service[0], (String) service[1], (int) service[2], (int) service[3]));
-            list.add(Box.createVerticalStrut(8));
-        }
-
         content.add(top, BorderLayout.NORTH);
         content.add(list, BorderLayout.CENTER);
 
         shell.add(createHeader(), BorderLayout.NORTH);
         shell.add(content, BorderLayout.CENTER);
+
+        // Loads the selected services without blocking the GUI
+        loadServices(list);
 
         return shell;
     }
@@ -151,63 +147,129 @@ public class CategoryServicesFrame extends JFrame {
         return row;
     }
 
-    // Reads the services file and loads the selected category
-    private Object[][] getServices() {
+    // Loads services from the server in a background thread
+    private void loadServices(JPanel list) {
+
+        // Displays a temporary message while waiting for the server
+        JLabel loading = new JLabel("Loading services...");
+        loading.setFont(NORMAL);
+        loading.setForeground(BROWN);
+        loading.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        list.add(loading);
+
+        Runnable loadingTask = () -> {
+            try {
+                    // Requests and validates services in the background
+                Object[][] services = getServices();
+
+                // Updates Swing components on the event dispatch thread
+                SwingUtilities.invokeLater(() -> {
+                    if (!isDisplayable()) {
+                        return;
+                    }
+
+                    list.removeAll();
+
+                    if (services.length == 0) {
+                        JLabel empty = new JLabel("No services available in this category.");
+                        empty.setFont(NORMAL);
+                        empty.setForeground(BROWN);
+                        empty.setAlignmentX(Component.CENTER_ALIGNMENT);
+                        list.add(empty);
+                    } else {
+                        // Displays each service using the existing card design
+                        for (Object[] service : services) {
+                            list.add(serviceRow((String) service[0], (String) service[1], (int) service[2], (int) service[3]));
+                            list.add(Box.createVerticalStrut(8));
+                        }
+                    }
+
+                    list.revalidate();
+                    list.repaint();
+                });
+
+            } catch (IOException ex) {
+                // Displays network or invalid service information errors
+                SwingUtilities.invokeLater(() -> displayLoadingError(list, ex.getMessage()));
+
+            } catch (RuntimeException ex) {
+                System.err.println("Service loading error: " + ex.getMessage());
+                SwingUtilities.invokeLater(() -> displayLoadingError(list, "An unexpected error occurred while loading services."));
+            }
+        };
+
+        Thread loadingThread = new Thread(loadingTask);
+        loadingThread.start();
+    }
+
+    // Refreshes the services panel after a loading failure
+    private void displayLoadingError(JPanel list, String message) {
+        if (!isDisplayable()) {
+            return;
+        }
+
+        list.removeAll();
+        showLoadError(list, message);
+        list.revalidate();
+        list.repaint();
+    }
+
+    // Requests and validates the selected services received from the server
+    private Object[][] getServices() throws IOException {
 
         ArrayList<Object[]> services = new ArrayList<>();
 
-    try (BufferedReader reader = new BufferedReader(new FileReader("services.txt"))) {
+        // Receives service information through the client/server connection
+        List<String> response = SalonClient.getServices(category);
 
-        String line;
-        boolean readingCategory = false;
-
-        while ((line = reader.readLine()) != null) {
-
-            line = line.trim();
-
-            if (line.isEmpty()) {
-                continue;
-            }
-
-            if (line.startsWith("[") && line.endsWith("]")) {
-                String fileCategory = line.substring(1, line.length() - 1);
-                readingCategory = fileCategory.equalsIgnoreCase(category);
-                continue;
-            }
-
-            if (readingCategory) {
-                String[] parts = line.split("\\|");
-
-                if (parts.length != 4) {
-                    throw new IllegalArgumentException("Invalid service format: " + line);
-                }
-
-                String name = parts[0].trim();
-                String description = parts[1].trim();
-                int price = Integer.parseInt(parts[2].trim());
-                int duration = Integer.parseInt(parts[3].trim());
-
-                if (name.isEmpty() || description.isEmpty() || price < 0 || duration <= 0) {
-                    throw new IllegalArgumentException("Invalid service information: " + line);
-                }
-
-                services.add(new Object[]{name, description, price, duration});
-            }
+        // Each service contains a name, description, price and duration
+        if (response.size() % 4 != 0) {
+            throw new IOException("Incomplete service information received from the server.");
         }
 
-    } catch (IOException e) {
-        services.clear();
-        JOptionPane.showMessageDialog(this, "Unable to load salon services from services.txt.\n" + e.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
+        // Converts the received information into service records
+        for (int i = 0; i < response.size(); i += 4) {
 
-    } catch (NumberFormatException e) {
-        services.clear();
-        JOptionPane.showMessageDialog(this, "Unable to load services: price and duration must be numbers in services.txt.", "File Error", JOptionPane.ERROR_MESSAGE);
-    } catch (IllegalArgumentException e) {
-        services.clear();
-        JOptionPane.showMessageDialog(this, "Unable to load services from services.txt.\n" + e.getMessage(), "Data Error", JOptionPane.ERROR_MESSAGE);
+            String name = response.get(i).trim();
+            String description = response.get(i + 1).trim();
+
+            int price;
+            int duration;
+
+            try {
+
+                // Converts the received numeric values
+                price = Integer.parseInt(response.get(i + 2).trim());
+                duration = Integer.parseInt(response.get(i + 3).trim());
+
+            } catch (NumberFormatException ex) {
+
+                throw new IOException("Unable to load services: price and duration must be numbers.", ex);
+            }
+
+            // Validates the received service information
+            if (name.isEmpty() || description.isEmpty() || price < 0 || duration <= 0) {
+                throw new IOException("Invalid service information received from the server.");
+            }
+
+            services.add(new Object[]{name, description, price, duration});
+        }
+
+        return services.toArray(new Object[0][]);
     }
 
-    return services.toArray(new Object[0][]);
+    // Displays a descriptive error when services cannot be loaded
+    private void showLoadError(JPanel list, String message) {
+
+        JLabel error = new JLabel("Unable to load salon services.");
+        error.setFont(NORMAL);
+        error.setForeground(BROWN);
+        error.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        list.add(error);
+
+        JOptionPane.showMessageDialog(this, message, "Service Loading Error", JOptionPane.ERROR_MESSAGE);
     }
 
     // Creates a main action button

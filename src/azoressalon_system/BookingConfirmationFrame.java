@@ -10,16 +10,17 @@ package azoressalon_system;
  */
 
 import javax.swing.*;
-import java.io.IOException;
 import javax.swing.border.*;
 import java.awt.*;
 import java.net.URL;
 import java.util.List;
+import java.util.ArrayList;
+import java.io.IOException;
 
 // Handles the booking review screen
 public class BookingConfirmationFrame extends JFrame {
 
-    static final Color BROWN = new Color(0x73, 0x4B, 0x3A);
+   static final Color BROWN = new Color(0x73, 0x4B, 0x3A);
     static final Color BEIGE = new Color(0xE9, 0xDF, 0xDA);
     static final Color GRAY_TEXT = new Color(0x99, 0x99, 0x99);
 
@@ -94,24 +95,121 @@ public class BookingConfirmationFrame extends JFrame {
 
         JButton confirm = makeMainButton("Confirm Booking");
 
-        confirm.addActionListener(e -> {
-            try {
-                new InvoiceFrame().setVisible(true);
-                dispose();
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Booking could not be confirmed because the invoice was not saved.\nPlease check the invoices file and try again.\n" + ex.getMessage(), "Booking Error", JOptionPane.ERROR_MESSAGE);
-            }
-        });
+        // Starts the booking process when the customer confirms the booking
+        confirm.addActionListener(e -> confirmBooking(confirm, back));
 
         buttons.add(back, BorderLayout.WEST);
         buttons.add(confirm, BorderLayout.EAST);
-
         bottom.add(buttons);
-
         content.add(bottom, BorderLayout.SOUTH);
         shell.add(content, BorderLayout.CENTER);
 
         return shell;
+    }
+
+    // Sends a booking request to the server for the logged-in customer
+    private void confirmBooking(JButton confirm, JButton back) {
+
+        // Retrieves the session token of the authenticated customer
+        final String sessionToken = SignUpFrame.getCurrentSessionToken();
+
+        // Checks that the customer has an active session
+        if (sessionToken == null || sessionToken.isEmpty()) {
+            showBookingError("You must log in before confirming a booking.");
+            return;
+        }
+
+        // Checks that the cart contains at least one service
+        if (CartFrame.getCart().isEmpty()) {
+            showBookingError("Your cart is empty. Please select a service first.");
+            return;
+        }
+
+        // Creates a separate copy of the selected services
+        final List<CartFrame.CartItem> items = new ArrayList<>();
+
+        for (CartFrame.CartItem item : CartFrame.getCart()) {
+            items.add(new CartFrame.CartItem(item.name, item.date, item.time, item.price));
+        }
+
+        // Prevents duplicate submissions while the booking is being processed
+        confirm.setEnabled(false);
+        back.setEnabled(false);
+
+        // Prevents closing the application while the booking is being saved
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+
+        // Sends the booking request on a separate thread
+        Runnable bookingTask = () -> {
+            try {
+                List<String> response = SalonClient.book(sessionToken, items);
+                String bookingId = response.get(0);
+                int total = Integer.parseInt(response.get(2));
+                String invoiceWarning = response.get(3);
+
+                List<CartFrame.CartItem> confirmedItems = new ArrayList<>();
+                boolean pricesChanged = false;
+
+                // Uses the confirmed service prices returned by the server
+                for (int i = 0; i < items.size(); i++) {
+                    CartFrame.CartItem item = items.get(i);
+                    int price = Integer.parseInt(response.get(4 + i));
+                    if (price != item.price) {
+                        pricesChanged = true;
+                    }
+                    confirmedItems.add(new CartFrame.CartItem(item.name, item.date, item.time, price));
+                }
+
+                final boolean showPriceWarning = pricesChanged;
+
+                // Updates the GUI on the Event Dispatch Thread
+                SwingUtilities.invokeLater(() -> {
+                    if (!isDisplayable()) {
+                        return;
+                    }
+                    setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+                    if (!invoiceWarning.isEmpty()) {
+                        JOptionPane.showMessageDialog(this, invoiceWarning, "Invoice Warning", JOptionPane.WARNING_MESSAGE);
+                    }
+
+                    if (showPriceWarning) {
+                        JOptionPane.showMessageDialog(this, "Service prices have changed. The confirmed total is " + total + " SAR.", "Price Update", JOptionPane.WARNING_MESSAGE);
+                    }
+
+                    // Opens the invoice using the confirmed prices
+                    new InvoiceFrame(bookingId, confirmedItems, total).setVisible(true);
+                    dispose();
+                });
+
+            } catch (IOException ex) {
+                System.err.println("Booking request error: " + ex.getMessage());
+                SwingUtilities.invokeLater(() -> restoreBookingControls(confirm, back, ex.getMessage() + "\nPlease check My Bookings before submitting another request."));
+
+            } catch (RuntimeException ex) {
+                System.err.println("Booking processing error: " + ex.getMessage());
+                SwingUtilities.invokeLater(() -> restoreBookingControls(confirm, back, "Could not process the booking response. Please check My Bookings before trying again."));
+            }
+        };
+
+        Thread bookingThread = new Thread(bookingTask);
+        bookingThread.start();
+    }
+
+    // Restores the booking controls after an unsuccessful request
+    private void restoreBookingControls(JButton confirm, JButton back, String message) {
+        if (!isDisplayable()) {
+            return;
+        }
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        confirm.setEnabled(true);
+        back.setEnabled(true);
+        showBookingError(message);
+    }
+
+    // Displays a descriptive booking error message
+    private void showBookingError(String message) {
+        JOptionPane.showMessageDialog(this, message, "Booking Error", JOptionPane.ERROR_MESSAGE);
     }
 
     // Creates the table of selected services

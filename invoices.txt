@@ -30,110 +30,162 @@ Status: Confirmed
 ==========================================
 
 ========== Azores Salon Invoice ==========
-Booking ID: AZ-1001
-Customer Name: raghad
-------------------------------------------
-Service: Blow Dry
-Date: September 20
-Time: 4:00 PM
-Price: 100 SAR
-------------------------------------------
-Total: 100 SAR
-Status: Confirmed
-==========================================
-
-========== Azores Salon Invoice ==========
-Booking ID: AZ-1001
-Customer Name: Raghad
-------------------------------------------
-Service: Blow Dry
-Date: September 22
-Time: 2:00 PM
-Price: 100 SAR
-------------------------------------------
-Service: Gel Polish
-Date: September 20
-Time: 4:00 PM
-Price: 100 SAR
-------------------------------------------
-Total: 200 SAR
-Status: Confirmed
-==========================================
-
-========== Azores Salon Invoice ==========
-Booking ID: AZ-1001
-Customer Name: قشلاشي
-------------------------------------------
-Service: Blow Dry
-Date: September 23
-Time: 2:00 PM
-Price: 100 SAR
-------------------------------------------
-Total: 100 SAR
-Status: Confirmed
-==========================================
-
-========== Azores Salon Invoice ==========
-Booking ID: AZ-1001
-Customer Name: Raghad
-------------------------------------------
-Service: Hair Dye
-Date: September 24
-Time: 6:00 PM
-Price: 150 SAR
-------------------------------------------
-Service: Gel Polish
-Date: September 24
-Time: 4:00 PM
-Price: 100 SAR
-------------------------------------------
-Total: 250 SAR
-Status: Confirmed
-==========================================
-
-========== Azores Salon Invoice ==========
-Booking ID: AZ-1001
-Customer Name: raghad
-------------------------------------------
-Service: Blow Dry
-Date: September 20
-Time: 4:00 PM
-Price: 100 SAR
-------------------------------------------
-Service: Soft Makeup
-Date: September 20
-Time: 5:00 PM
-Price: 150 SAR
-------------------------------------------
-Total: 250 SAR
-Status: Confirmed
-==========================================
-
-========== Azores Salon Invoice ==========
-Booking ID: AZ-180eb03d-d0f6-4ebe-bbf8-e6ee8b895598
-Customer Name: raghad
-------------------------------------------
-Service: Hair Dye
-Date: September 20
-Time: 4:00 PM
-Price: 150 SAR
-------------------------------------------
-Service: Deep Cleansing
-Date: September 20
-Time: 12:00 PM
-Price: 120 SAR
-------------------------------------------
-Total: 270 SAR
-Status: Confirmed
-==========================================
-
-========== Azores Salon Invoice ==========
 Booking ID: AZ-1003
 Customer Name: raghad
 ------------------------------------------
 Service: Hair Dye
 Date: September 20
 Time: 4:00 PM
+Price: 150 SAR
+------------------------------------------
+Total: 150 SAR
+Status: Confirmed
+==========================================
+
+========== Azores Salon Invoice ==========
+Booking ID: AZ-1004
+Customer Name: raghad
+------------------------------------------
+Service: Hair Dye
+Date: September 20
+Time: 4:00 PM
+Price: 150 SAR
+------------------------------------------
+Total: 150 SAR
+Status: Confirmed
+==========================================
+
+========== Azores Salon Invoice ==========
+Booking ID: AZ-1005
+Customer Name: Rimas
+------------------------------------------
+Service: Blow Dry
+Date: November 27 2026
+Time: 10:00 AM
+Price: 100 SAR
+------------------------------------------
+Service: Manicure
+Date: November 25 2026
+Time: 4:00 PM
+Price: 60 SAR
+------------------------------------------
+Service: Hair Dye
+Date: November 27 2026
+Time: 4:00 PM
+Price: 150 SAR
+------------------------------------------
+Total: 310 SAR
+Status: Confirmed
+==========================================
+
+========== Azores Salon Invoice ==========
+Booking ID: AZ-1006
+Customer Name: rimas
+------------------------------------------
+Service: Hair Dye
+Date: November 25 2026
+Time: 4:00 PM
+Price: 150 SAR
+------------------------------------------
+Service: Pedicure
+Date: November 25 2026
+Time: 6:00 PM
+Price: 70 SAR
+------------------------------------------
+Total: 220 SAR
+Status: Confirmed
+==========================================
+
+========== Azores Salon Invoice ==========
+Booking ID: AZ-1007
+Customer Name: Raghad Alassaf
+------------------------------------------
+Service: Blow Dry
+Date: November 29 2026
+Time: 5:00 PM
+Price: 100 SAR
+------------------------------------------
+Total: 100 SAR
+Status: Confirmed
+==========================================
+
+========== Azores Salon Invoice ==========
+Booking ID: AZ-1008
+Customer Name: Raghad Alassaf
+------------------------------------------
+Service: Hair Dye
+Date: November 27 2026
+Time: 10:00 AM
+Price: 150 SAR
+------------------------------------------
+Total: 150 SAR
+Status: Confirmed
+==========================================
+
+========== Azores Salon Invoice ==========
+Booking ID: AZ-1009
+Customer Name: mona
+------------------------------------------
+Service: Full Makeup
+Date: November 27 2026
+Time: 10:00 AM
+Price: 170 SAR
+------------------------------------------
+Total: 170 SAR
+Status: Confirmed
+==========================================
+
+========== Azores Salon Invoice ==========
+Booking ID: AZ-1011
+Customer Name: mona
+------------------------------------------
+Service: Full Makeup
+Date: November 27 2026
+Time: 4:00 PM
+Price: 170 SAR
+------------------------------------------
+Total: 170 SAR
+Status: Confirmed
+==========================================
+
+========== Azores Salon Invoice ==========
+Booking ID: AZ-1012
+Customer Name: test
+------------------------------------------
+Service: Blow Dry
+Date: November 29 2026
+Time: 4:00 PM
+Price: 100 SAR
+------------------------------------------
+Service: Soft Makeup
+Date: November 29 2026
+Time: 6:00 PM
+Price: 150 SAR
+------------------------------------------
+Total: 250 SAR
+Status: Confirmed
+==========================================
+
+========== Azores Salon Invoice ==========
+Booking ID: AZ-1013
+Customer Name: Raghad Alassaf
+------------------------------------------
+Service: Pedicure
+Date: November 28 2026
+Time: 6:00 PM
+Price: 70 SAR
+------------------------------------------
+Total: 70 SAR
+Status: Confirmed
+==========================================
+
+========== Azores Salon Invoice ==========
+Booking ID: AZ-1014
+Customer Name: test
+------------------------------------------
+Service: Hair Dye
+Date: November 28 2026
+Time: 2:00 PM
 Price: 150 SAR
 ------------------------------------------
 Total: 150 SAR

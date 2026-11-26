@@ -9,12 +9,12 @@ package azoressalon_system;
  * @author ragha
  */
 
+
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.net.URL;
 import java.util.List;
-import java.io.*;
 
 // Handles the confirmed booking and invoice screen
 public class InvoiceFrame extends JFrame {
@@ -30,18 +30,20 @@ public class InvoiceFrame extends JFrame {
     static final Font SMALL = new Font("Serif", Font.PLAIN, 13);
 
     private final String bookingId;
+    private final List<CartFrame.CartItem> bookedItems;
+    private final int bookingTotal;
 
-    public InvoiceFrame() throws IOException {
+    public InvoiceFrame(String bookingId, List<CartFrame.CartItem> bookedItems, int bookingTotal) {
         super("Azores Salon");
 
-        bookingId = generateBookingId();
+        this.bookingId = bookingId;
+        this.bookedItems = bookedItems;
+        this.bookingTotal = bookingTotal;
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(700, 600);
         setLocationRelativeTo(null);
 
-        // Save the invoice before showing the booking as confirmed
-        saveInvoiceToFile();
 
         add(buildInvoiceScreen());
     }
@@ -78,7 +80,7 @@ public class InvoiceFrame extends JFrame {
         middle.setLayout(new BoxLayout(middle, BoxLayout.Y_AXIS));
         middle.setOpaque(false);
 
-        List<CartFrame.CartItem> cart = CartFrame.getCart();
+        List<CartFrame.CartItem> cart = bookedItems;
 
         middle.add(buildOrderTable(cart));
         middle.add(Box.createVerticalStrut(14));
@@ -91,7 +93,7 @@ public class InvoiceFrame extends JFrame {
         JLabel totalText = new JLabel("Total");
         totalText.setFont(BOLD);
 
-        JLabel totalPrice = new JLabel(CartFrame.getTotal() + " SAR");
+        JLabel totalPrice = new JLabel(bookingTotal + " SAR");
         totalPrice.setFont(BOLD);
 
         totalRow.add(totalText, BorderLayout.WEST);
@@ -234,71 +236,4 @@ public class InvoiceFrame extends JFrame {
         return new ImageIcon(image);
     }
 
-    // Generates the next booking ID based on saved invoices
-    private String generateBookingId() throws IOException {
-    int lastId = 1000;
-    File file = new File("invoices.txt");
-
-    if (file.exists()) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                if (line.startsWith("Booking ID: AZ-")) {
-                    String id = line.substring("Booking ID: AZ-".length()).trim();
-
-                    try {
-                        int number = Integer.parseInt(id);
-                        if (number > lastId) {
-                            lastId = number;
-                        }
-                    } catch (NumberFormatException e) {
-                        // Skips booking IDs that are not numeric
-                    }
-                }
-            }
-        }
-    }
-
-    return "AZ-" + (lastId + 1);
-}
-
-    // Appends the confirmed invoice details to invoices.txt
-    private void saveInvoiceToFile() throws IOException {
-        String customerName = SignUpFrame.getCurrentCustomerName();
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("invoices.txt", true))) {
-
-            writer.write("========== Azores Salon Invoice ==========");
-            writer.newLine();
-            writer.write("Booking ID: " + bookingId);
-            writer.newLine();
-            writer.write("Customer Name: " + customerName);
-            writer.newLine();
-            writer.write("------------------------------------------");
-            writer.newLine();
-
-            for (CartFrame.CartItem item : CartFrame.getCart()) {
-                writer.write("Service: " + item.name);
-                writer.newLine();
-                writer.write("Date: " + item.date);
-                writer.newLine();
-                writer.write("Time: " + item.time);
-                writer.newLine();
-                writer.write("Price: " + item.price + " SAR");
-                writer.newLine();
-                writer.write("------------------------------------------");
-                writer.newLine();
-            }
-
-            writer.write("Total: " + CartFrame.getTotal() + " SAR");
-            writer.newLine();
-            writer.write("Status: Confirmed");
-            writer.newLine();
-            writer.write("==========================================");
-            writer.newLine();
-            writer.newLine();
-
-        }
-    }
 }
